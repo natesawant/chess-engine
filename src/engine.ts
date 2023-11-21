@@ -24,34 +24,14 @@ export function nextBestMove(fen: string, depth = 1) {
   const game = new Chess(fen);
 
   if (!game.isGameOver()) {
-    const moves = game.moves();
-    var bestMove;
-    var value;
-    for (let move of moves) {
-      const gameCopy = new Chess(game.fen());
-      gameCopy.move(move);
-      const moveValue = minimax(gameCopy, depth, -99999, 99999, game.turn());
+    const [_, sequence] = minimax(game, [], depth, -9999, 9999);
 
-      console.log(move + ": " + moveValue);
+    console.log("BEST SEQUENCE = " + sequence);
 
-      if (game.turn() == WHITE) {
-        if (value == undefined || moveValue >= value) {
-          value = moveValue;
-          bestMove = move;
-        }
-      } else {
-        if (value == undefined || moveValue <= value) {
-          value = moveValue;
-          bestMove = move;
-        }
-      }
-    }
-
-    console.log(bestMove);
-    game.move(bestMove);
+    game.move(sequence[0]);
 
     return {
-      bestMove: bestMove,
+      bestMove: sequence[0],
       fen: game.fen(),
     };
   } else {
@@ -62,40 +42,70 @@ export function nextBestMove(fen: string, depth = 1) {
 // WHITE MAXIMIZES, BLACK MINIMIZES
 export function minimax(
   game: Chess,
+  sequence: string[],
   depth = 5,
-  alpha = -99999,
-  beta = 99999,
-  maximizingPlayer: Color
-) {
+  alpha = Number.NEGATIVE_INFINITY,
+  beta = Number.POSITIVE_INFINITY
+): [number, string[]] {
   if (depth == 0 || game.isGameOver()) {
-    return evaluatePosition(game.fen());
+    return [evaluatePosition(game.fen()), sequence];
   }
-  if (maximizingPlayer == WHITE) {
-    var value = -99999;
+  if (game.turn() == WHITE) {
+    var value = Number.NEGATIVE_INFINITY;
+    var bestSequence: string[];
     const moves = game.moves();
     for (let move of moves) {
       const nodeCopy = new Chess(game.fen());
+      const sequenceCopy = [...sequence];
+
       nodeCopy.move(move);
-      value = Math.max(value, minimax(nodeCopy, depth - 1, alpha, beta, BLACK));
+      sequenceCopy.push(move);
+
+      const [moveEval, moveSequence] = minimax(
+        nodeCopy,
+        sequenceCopy,
+        depth - 1,
+        alpha,
+        beta
+      );
+      if (moveEval > value) {
+        value = moveEval;
+        bestSequence = moveSequence;
+      }
       alpha = Math.max(alpha, value);
       if (value >= beta) {
         break;
       }
     }
-    return value;
+    return [value, bestSequence];
   } else {
-    var value = 99999;
+    var value = Number.POSITIVE_INFINITY;
+    var bestSequence: string[];
     const moves = game.moves();
     for (let move of moves) {
       const nodeCopy = new Chess(game.fen());
+      const sequenceCopy = [...sequence];
+
       nodeCopy.move(move);
-      value = Math.min(value, minimax(nodeCopy, depth - 1, alpha, beta, WHITE));
+      sequenceCopy.push(move);
+
+      const [moveEval, moveSequence] = minimax(
+        nodeCopy,
+        sequenceCopy,
+        depth - 1,
+        alpha,
+        beta
+      );
+      if (moveEval < value) {
+        value = moveEval;
+        bestSequence = moveSequence;
+      }
       beta = Math.min(beta, value);
       if (value <= alpha) {
         break;
       }
     }
-    return value;
+    return [value, bestSequence];
   }
 }
 
