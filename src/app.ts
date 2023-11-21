@@ -14,14 +14,25 @@ app.get('/test', (req, res) => {
   res.send(game);
 })
 
+// GET method route
+app.get('/', (req, res) => {
+  res.send('GET request to the homepage')
+})
+
+app.post('/', (req, res) => {
+  res.send('POST request to the homepage')
+})
+
 app.post('/engine', (req, res) => {
   const fen = req.body.fen
+  const depth = req.body.depth
 
   if (fen) {
-    res.send(nextBestMove(fen));
+    res.status(200)
+    res.send(nextBestMove(fen, depth));
   } else {
     res.status(400);
-    res.send();
+    res.send('test');
   }
 })
 
