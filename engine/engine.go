@@ -10,9 +10,6 @@ import (
 func BestMove(game *chess.Game, depth int) *chess.Move {
 	value, bestGame := AlphaBetaPruning(game, depth, math.MinInt, math.MaxInt)
 
-	//fmt.Println(bestGame.String())
-	//fmt.Println(bestGame.MoveHistory())
-
 	history := bestGame.Moves()
 
 	bestMove := history[len(game.Moves())]

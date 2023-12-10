@@ -13,9 +13,9 @@ func TestEvaluation(t *testing.T) {
 		eval int
 	}{
 		{"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", 0},
-		{"rnbqkbnr/pppppppp/8/8/8/8/PPPP1PPP/RNBQKBNR w KQkq - 0 1", -1},
-		{"rnbqkbnr/p1pppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", 1},
-		{"rnbqkbnr/pppppppp/8/8/8/8/8/4K3 w kq - 0 1", -39},
+		{"rnbqkbnr/pppppppp/8/8/8/8/PPPP1PPP/RNBQKBNR w KQkq - 0 1", -100},
+		{"rnbqkbnr/p1pppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", 100},
+		{"rnbqkbnr/pppppppp/8/8/8/8/8/4K3 w kq - 0 1", -3900},
 	}
 
 	for index, test := range tests {

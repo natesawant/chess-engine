@@ -5,28 +5,41 @@ import (
 )
 
 var pieceValues = map[chess.PieceType]int{
-	chess.Pawn:   1,
-	chess.Bishop: 3,
-	chess.Knight: 3,
-	chess.Rook:   5,
-	chess.Queen:  9,
-	chess.King:   100,
+	chess.Pawn:   100,
+	chess.Bishop: 300,
+	chess.Knight: 300,
+	chess.Rook:   500,
+	chess.Queen:  900,
+	chess.King:   10000,
+}
+
+var arrCenterManhattanDistance = []int{
+	-6, -7, -8, -9, -9, -8, -7, -6,
+	-4, -5, -6, -7, -7, -6, -5, -4,
+	-4, -3, -2, -2, -2, -2, -3, -4,
+	-3, -2, -1, -0, -0, -1, -2, -3,
+	3, 2, 1, 0, 0, 1, 2, 3,
+	4, 3, 2, 2, 2, 2, 3, 4,
+	4, 5, 6, 7, 7, 6, 5, 4,
+	6, 7, 8, 9, 9, 8, 7, 6,
 }
 
 func EvaluatePosition(game *chess.Game) int {
-	if game.Outcome() == chess.Draw {
+	if len(game.EligibleDraws()) != 1 {
+		return 0
+	} else if game.Outcome() == chess.Draw {
 		return 0
 	} else if game.Outcome() == chess.WhiteWon {
-		return 1000
+		return 10000
 	} else if game.Outcome() == chess.BlackWon {
-		return -1000
+		return -10000
 	}
 
 	evaluation := 0
 
 	squareMap := game.Position().Board().SquareMap()
 
-	for _, piece := range squareMap {
+	for square, piece := range squareMap {
 
 		var colorSign int
 
@@ -37,7 +50,8 @@ func EvaluatePosition(game *chess.Game) int {
 		}
 
 		pieceValue := pieceValues[piece.Type()]
-		evaluation += colorSign * pieceValue
+
+		evaluation += colorSign*pieceValue + arrCenterManhattanDistance[square]
 	}
 
 	return evaluation
